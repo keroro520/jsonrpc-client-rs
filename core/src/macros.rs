@@ -14,7 +14,7 @@ macro_rules! jsonrpc_client {
         $(#[$struct_attr:meta])*
         pub struct $struct_name:ident {$(
             $(#[$attr:meta])*
-            pub fn $method:ident(&mut $selff:ident $(, $arg_name:ident: $arg_ty:ty)*)
+            pub fn $method:ident(&$selff:ident $(, $arg_name:ident: $arg_ty:ty)*)
                 -> Future<$return_ty:ty>;
         )*}
     ) => (
@@ -31,7 +31,7 @@ macro_rules! jsonrpc_client {
 
             $(
                 $(#[$attr])*
-                pub fn $method(&mut $selff $(, $arg_name: $arg_ty)*)
+                pub fn $method(&$selff $(, $arg_name: $arg_ty)*)
                     -> impl $crate::Future<Item = $return_ty, Error = $crate::Error> + 'static
                 {
                     let method = String::from(stringify!($method));

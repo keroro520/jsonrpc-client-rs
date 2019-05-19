@@ -1,24 +1,24 @@
 use jsonrpc_core::types::Id;
+use std::sync::Mutex;
 
 #[derive(Debug)]
 pub struct IdGenerator {
-    next_id: u64,
+    next_id: Mutex<u64>,
 }
 
 impl IdGenerator {
     pub fn new() -> IdGenerator {
-        IdGenerator { next_id: 1 }
+        IdGenerator { next_id: Mutex::new(1), }
     }
 
-    pub fn next(&mut self) -> Id {
-        let id = Id::Num(self.next_id);
-        self.next_id += 1;
-        id
+    pub fn next(&self) -> Id {
+        Id::Num(self.next_int())
     }
 
-    pub fn next_int(&mut self) -> u64 {
-        let id = self.next_id;
-        self.next_id += 1;
-        id
+    pub fn next_int(&self) -> u64 {
+        let mut id = self.next_id.lock().expect("acquire id");
+        let next_id = *id;
+        *id += 1;
+        next_id
     }
 }
